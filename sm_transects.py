@@ -3,8 +3,8 @@ import numpy as np
 from sm_func import *
 import matplotlib.pyplot as plt
 
-path = 'data/'
-out_path = 'plots/'
+path = '../data/'
+out_path = '../plots/'
 
 #open ski ArcArc2007 file
 fname = 'ArcticArc2007_snow.csv'
