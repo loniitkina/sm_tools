@@ -8,7 +8,7 @@ path = '../data/CryoVEX_2017/'
 out_path = '../plots/'
 
 #initialize plots
-fig1 = plt.figure(figsize=(9,5))
+fig1 = plt.figure(figsize=(12,9))
 
 ax = fig1.add_subplot(111)
 name = 'CryoVEX2017 vs. SnowModel'
@@ -47,10 +47,29 @@ lat = np.round(lat,1)
 snod_mo_h = np.where(snod_mo2>22,snod_mo2,snod_mo)
 snod_mo_l = np.where(snod_mo2<22,snod_mo2,snod_mo)
 
+#OIB data
+fname = 'OIB_CryoVex2017_snow.csv'
+snod_oib_m = getColumn(path+fname,3, delimiter=',')
+snod_oib_sd = getColumn(path+fname,4, delimiter=',')
+snod_oib_mo = getColumn(path+fname,6, delimiter=',')
+snod_oib_mo2 = getColumn(path+fname,7, delimiter=',')
+
+snod_oib_m = np.array(snod_oib_m,dtype=np.float)*100         #change from m to cm
+snod_oib_sd = np.array(snod_oib_sd,dtype=np.float)*100         #change from m to cm
+snod_oib_mo = np.array(snod_oib_mo,dtype=np.float)*100
+snod_oib_mo2 = np.array(snod_oib_mo2,dtype=np.float)*100
+
+snod_oib_mo_h = np.where(snod_oib_mo2>22,snod_oib_mo2,snod_oib_mo)
+snod_oib_mo_l = np.where(snod_oib_mo2<22,snod_oib_mo2,snod_oib_mo)
+
+
 #plot observations
 ax.errorbar(pn,snod,snod_sd,label='CryoVEx 2017 mean and standard deviation', capsize=5, capthick=3)
+ax.errorbar(pn,snod_oib_m,snod_oib_sd,label='OIB 2017 mean and standard deviation', capsize=5, capthick=3,c='k')
 ax.plot(pn,snod_mo_h,label='CryoVEx 2017 high mode')
 ax.plot(pn,snod_mo_l,label='CryoVEx 2017 low mode')
+ax.plot(pn,snod_oib_mo_h,label='OIB 2017 high mode',c='.3',ls='--')
+ax.plot(pn,snod_oib_mo_l,label='OIB 2017 low mode',c='.3',ls=':')
 
 #grad = np.gradient(snod)
 #grad_m = np.mean(np.abs(grad))
