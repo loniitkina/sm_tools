@@ -44,35 +44,32 @@ lat = np.array(lat,dtype=np.float)
 lat = np.round(lat,1)
 
 #sort modes into high and low modes
-comp = snod_mo2 - snod_mo
-snod_mo_h = np.where(comp>0,snod_mo2,snod_mo)
-snod_mo_l = np.where(comp<0,snod_mo2,snod_mo)
+snod_mo_h = np.where(snod_mo2>22,snod_mo2,snod_mo)
+snod_mo_l = np.where(snod_mo2<22,snod_mo2,snod_mo)
 
 #OIB data
 fname = 'OIB_CryoVex2017_snow.csv'
-fname = 'OIB_CryoVex2017_snow_12km.csv'
 snod_oib_m = getColumn(path+fname,3, delimiter=',')
 snod_oib_sd = getColumn(path+fname,4, delimiter=',')
 snod_oib_mo = getColumn(path+fname,6, delimiter=',')
 snod_oib_mo2 = getColumn(path+fname,7, delimiter=',')
 
-snod_oib_m = np.array(snod_oib_m,dtype=np.float)
-snod_oib_sd = np.array(snod_oib_sd,dtype=np.float)
-snod_oib_mo = np.array(snod_oib_mo,dtype=np.float)
-snod_oib_mo2 = np.array(snod_oib_mo2,dtype=np.float)
+snod_oib_m = np.array(snod_oib_m,dtype=np.float)*100         #change from m to cm
+snod_oib_sd = np.array(snod_oib_sd,dtype=np.float)*100         #change from m to cm
+snod_oib_mo = np.array(snod_oib_mo,dtype=np.float)*100
+snod_oib_mo2 = np.array(snod_oib_mo2,dtype=np.float)*100
 
+snod_oib_mo_h = np.where(snod_oib_mo2>22,snod_oib_mo2,snod_oib_mo)
+snod_oib_mo_l = np.where(snod_oib_mo2<22,snod_oib_mo2,snod_oib_mo)
 
-comp = snod_oib_mo2 - snod_oib_mo
-snod_oib_mo_h = np.where(comp>0,snod_oib_mo2,snod_oib_mo)
-snod_oib_mo_l = np.where(comp<0,snod_oib_mo2,snod_oib_mo)
 
 #plot observations
-ax.errorbar(pn,snod,snod_sd,label='CryoVEx 2017 mean and standard deviation', capsize=5, capthick=3,c='k')
-ax.errorbar(pn,snod_oib_m,snod_oib_sd,label='OIB 2017 mean and standard deviation', capsize=5, capthick=3,c='k',ls='--')
-ax.plot(pn,snod_mo_h,label='CryoVEx 2017 high mode',lw=3)
-ax.plot(pn,snod_mo_l,label='CryoVEx 2017 low mode',lw=3)
-ax.plot(pn,snod_oib_mo_h,label='OIB 2017 high mode',lw=3)
-ax.plot(pn,snod_oib_mo_l,label='OIB 2017 low mode',lw=3)
+#ax.errorbar(pn,snod,snod_sd,label='CryoVEx 2017 mean and standard deviation', capsize=5, capthick=3)
+#ax.errorbar(pn,snod_oib_m,snod_oib_sd,label='OIB 2017 mean and standard deviation', capsize=5, capthick=3,c='k')
+ax.plot(pn,snod_mo_h,label='CryoVEx 2017 high mode')
+ax.plot(pn,snod_mo_l,label='CryoVEx 2017 low mode')
+ax.plot(pn,snod_oib_mo_h,label='OIB 2017 high mode',c='.3',ls='--')
+ax.plot(pn,snod_oib_mo_l,label='OIB 2017 low mode',c='.3',ls=':')
 
 #grad = np.gradient(snod)
 #grad_m = np.mean(np.abs(grad))
@@ -88,7 +85,7 @@ ax.plot(pn,snod_oib_mo_l,label='OIB 2017 low mode',lw=3)
 #print(grad_mo_m)
 
 
-colors = ['c','m']
+colors = ['r','m']
 ci=0
 
 #open SnowModel file for same traverse
@@ -132,22 +129,7 @@ for ff in forcing_files:
     #plot model with this forcing
     forcing = ff.split('_')[-1].split('.')[0]
     #ax.plot(pn,snod_m_m1,label='SnowModel '+forcing+' (1 nearest)',c=colors[ci])
-    #ax.plot(pn,snod_m_smooth,label='SnowModel '+forcing+' (adjusted low - 3 nearest)')
-    
-    #scatter
-    for pp in range(0,10):
-        snod_station = snod_m[pp,:8]
-        #exit()
-        xx = np.ones_like(snod_station)*pp+1
-        print(snod_station)
-        print(xx)
-        ax.scatter(xx,snod_station,c=colors[ci])
-        
-        mean = np.mean(snod_station)
-        ax.scatter(pp+1,mean,marker='*',s=100,c=colors[ci])
-    
-    #for legend
-    ax.scatter(1,0,c=colors[ci],label='SnowModel '+forcing)
+    ax.plot(pn,snod_m_smooth,label='SnowModel '+forcing+' (adjusted low - 3 nearest)',ls='--',c=colors[ci])
     
     #print('Snow Model')
     #print(forcing)
@@ -174,7 +156,7 @@ ax.set_xticklabels(lat)
 ax.legend()
 #bx.legend()
 fig1.tight_layout()
-fig1.savefig(out_path+'traverse_2017_all_8')
+fig1.savefig(out_path+'traverse_2017_all')
 
 
 ##scatter plot
